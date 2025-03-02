@@ -137,7 +137,6 @@ end)
 
 -- Keys disabling
 Map("n", "q", "<nop>")
--- Map("n", "ZZ", "<nop>")
 Map("n", "ZQ", "<nop>")
 Map("n", "<F1>", "<nop>")
 Map("n", "<F3>", "<nop>")
