@@ -6,16 +6,14 @@ function Map(mode, lhs, rhs, opts)
   vim.keymap.set(mode, lhs, rhs, options)
 end
 
--- Map("i", "jj", "<Esc>")
-
 Map({ "n", "v" }, "<leader>d", [["_d]])
 Map({ "v" }, "<leader>p", [["_dP]])
 
 Map("n", "gl", "g_")      -- Move to the last non-blank character of the line
 Map("n", "gh", "^")       -- Move to the first non-blank character of the line
+Map("n", "Y", "y$")       -- Yank from cursor to end of the line
 Map("n", "gj", "/^#<CR>") -- Jump to the next Markdown header
 Map("n", "gk", "?^#<CR>") -- Jump to the previous Markdown header
-Map("n", "Y", "y$")       -- Yank from cursor to end of the line
 
 -- Map({ "n", "v" }, "y", "myy`y")
 
@@ -35,12 +33,6 @@ Map("n", "Y", "y$")       -- Yank from cursor to end of the line
 -- Map("n", "<C-j>", "<C-w>j")
 -- Map("n", "<C-k>", "<C-w>k")
 -- Map("n", "<C-l>", "<C-w>l")
-
--- terminal
-Map("t", "<C-h>", "<cmd>wincmd h<CR>")
-Map("t", "<C-j>", "<cmd>wincmd j<CR>")
-Map("t", "<C-k>", "<cmd>wincmd k<CR>")
-Map("t", "<C-l>", "<cmd>wincmd l<CR>")
 
 Map("n", "<C-Up>", ":resize -2<CR>")
 Map("n", "<C-Down>", ":resize +2<CR>")
