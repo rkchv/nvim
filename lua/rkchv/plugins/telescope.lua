@@ -1,107 +1,129 @@
 return {
-  "nvim-telescope/telescope.nvim",
-  enabled = true,
-  cmd = { "Telescope" },
+	{
+		"nvim-telescope/telescope.nvim",
+		enabled = true,
+		cmd = { "Telescope" },
 
-  dependencies = {
-    "nvim-lua/plenary.nvim",
-    "ThePrimeagen/git-worktree.nvim",
-    {
-      "nvim-telescope/telescope-fzf-native.nvim",
-      build = "cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release",
-    },
-  },
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			"ThePrimeagen/refactoring.nvim",
+			{
+				"nvim-telescope/telescope-fzf-native.nvim",
+				build = "cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release",
+			},
+		},
 
-  opts = function(_, opts)
-    local actions = require("telescope.actions")
-    opts.defaults = {
-      -- preview = {
-      --   treesitter = false,
-      -- },
-      vimgrep_arguments = {
-        "rg",
-        "--color=never",
-        "--no-heading",
-        "--with-filename",
-        "--line-number",
-        "--column",
-        "--smart-case",
-        "--hidden",
-      },
-      file_ignore_patterns = {
-        ".git/",
-        "vendor",
-        "node_modules",
-        "assets",
-        "commercial",
-        ".DS_Store",
-        "build/",
-        "dist/",
-        ".expo/"
-      },
-      layout_config = {
-        prompt_position = "top",
-        height = 0.5,
-        width = 0.87,
-      },
-      layout_strategy = "horizontal",
-      mappings = {
-        i = {
-          ["<c-j>"] = actions.move_selection_next,
-          ["<c-k>"] = actions.move_selection_previous,
-        },
-      },
-      sorting_strategy = "ascending",
-      winblend = 0,
-    }
-    opts.pickers = {
-      -- colorscheme = { enable_preview = true },
-      find_files = { hidden = true, no_ignore = true },
-      -- git_files = { hidden = true },
-    }
-    opts.extensions = {
-      file_browser = {
-        hijack_netrw = true,
-      },
-    }
-  end,
+		opts = function(_, opts)
+			local actions = require("telescope.actions")
 
-  config = function(_, opts)
-    local telescope = require("telescope")
-    local builtin = require("telescope.builtin")
-    local gitworktree = require("telescope").extensions.git_worktree
+			opts.defaults = {
+				preview = false,
+				layout_config = { height = 0.5, width = 0.60 },
+				sorting_strategy = "ascending",
+				mappings = {
+					i = {
+						["<c-j>"] = actions.move_selection_next,
+						["<c-k>"] = actions.move_selection_previous,
+					},
+				},
+			}
+			opts.pickers = {
+				find_files = { hidden = true, no_ignore = false },
+				git_files = { hidden = true, no_ignore = false },
+			}
+		end,
 
-    telescope.setup(opts)
-    telescope.load_extension("fzf")
-    telescope.load_extension("git_worktree")
+		config = function(_, opts)
+			local telescope = require("telescope")
+			local builtin = require("telescope.builtin")
 
-    -- Map("n", "<leader>fa", "<cmd> Telescope find_files follow=true no_ignore=true hidden=true <CR>")
+			telescope.setup(opts)
+			telescope.load_extension("fzf")
+			telescope.load_extension("refactoring")
 
-    vim.keymap.set("n", "<leader>?", builtin.oldfiles, { desc = "[?] Find recently opened files" })
-    vim.keymap.set("n", "<leader>/", function()
-      builtin.current_buffer_fuzzy_find(require("telescope.themes").get_dropdown({
-        winblend = 10,
-        previewer = true,
-      }))
-    end, { desc = "[/] Fuzzily search in current buffer]" })
+			local refactoring = telescope.extensions.refactoring
 
-    vim.keymap.set("n", "<leader>fj", builtin.find_files, { desc = "[S]earch [F]iles" })
-    vim.keymap.set("n", "<leader>fk", builtin.git_files, {})
-    vim.keymap.set("n", "<leader>fh", builtin.grep_string, { desc = "[S]earch current [W]ord" })
-    vim.keymap.set("n", "<leader>fg", builtin.live_grep, { desc = "[S]earch by [G]rep" })
-    vim.keymap.set("n", "<leader>fd", builtin.diagnostics, { desc = "[S]earch [D]iagnostics" })
-    vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "[ ] Find existing buffers" })
-    vim.keymap.set("n", "<leader>fs", builtin.git_status, { desc = "" })
-    vim.keymap.set("n", "<leader>ft", gitworktree.git_worktrees, { silent = true })
-    vim.keymap.set("n", "<leader>gt", gitworktree.create_git_worktree, { silent = true })
-    vim.keymap.set("n", "<leader>hm", ":Telescope harpoon marks<CR>", { desc = "Harpoon [M]arks" })
+			vim.keymap.set("n", "<leader><tab>", builtin.commands, { desc = "Show available commands" })
+			vim.keymap.set("n", "<leader>?", builtin.oldfiles, { desc = "Recently opened files" })
+			vim.keymap.set("n", "<leader>/", builtin.current_buffer_fuzzy_find, { desc = "Search here" })
+			vim.keymap.set("n", "<leader>fd", builtin.diagnostics, { desc = "Search by diagnosticts" })
+			vim.keymap.set("n", "<leader>fj", builtin.find_files, { desc = "Search needed file" })
+			-- vim.keymap.set("n", "<leader>ff", builtin.grep_string, { desc = "Search word under cursor" })
+			vim.keymap.set("n", "<leader>ff", builtin.live_grep, { desc = "Search word in all files" })
+			vim.keymap.set("n", "<leader>gc", builtin.git_commits, { desc = "Search Git Commits" })
+			vim.keymap.set("n", "<leader>gb", builtin.git_bcommits, { desc = "Search Git Commits for Buffer" })
+			vim.keymap.set("n", "<leader>gs", builtin.git_status, { desc = "Changed files in repo" })
+			vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "All opened session buffers" })
+			vim.keymap.set("n", "<leader>fk", builtin.keymaps, { desc = "Find Keymaps" })
 
-    vim.api.nvim_set_keymap("n", "td", ":TodoTelescope<CR>", { noremap = true })
-    vim.api.nvim_set_keymap(
-      "n",
-      "<Leader><tab>",
-      "<Cmd>lua require('telescope.builtin').commands()<CR>",
-      { noremap = false }
-    )
-  end,
+			vim.keymap.set({ "n", "x" }, "<leader>rr", function()
+				refactoring.refactors()
+			end)
+
+			vim.keymap.set("n", "<leader>td", ":TodoTelescope<CR>", { desc = "Todo List" })
+			vim.keymap.set("n", "<leader>cl", "<cmd>Telescope neoclip<CR>", { desc = "Telescope Neoclip" })
+		end,
+	},
+	{
+		"AckslD/nvim-neoclip.lua",
+		dependencies = {
+			{ "nvim-telescope/telescope.nvim" },
+		},
+		config = function()
+			require("neoclip").setup({
+				history = 1000,
+				enable_persistent_history = false,
+				length_limit = 1048576,
+				continuous_sync = false,
+				db_path = vim.fn.stdpath("data") .. "/databases/neoclip.sqlite3",
+				filter = nil,
+				preview = false,
+				prompt = nil,
+				default_register = '"',
+				default_register_macros = "q",
+				enable_macro_history = true,
+				content_spec_column = false,
+				disable_keycodes_parsing = false,
+				on_select = {
+					move_to_front = false,
+					close_telescope = true,
+				},
+				on_paste = {
+					set_reg = false,
+					move_to_front = false,
+					close_telescope = true,
+				},
+				on_replay = {
+					set_reg = false,
+					move_to_front = false,
+					close_telescope = true,
+				},
+				on_custom_action = {
+					close_telescope = true,
+				},
+				keys = {
+					telescope = {
+						i = {
+							paste = "<CR>",
+							-- select = "<cr>",
+							-- paste_behind = "P",
+							-- delete = "",
+							-- replay = "",
+							-- edit = "",
+							-- custom = {},
+						},
+						n = {
+							paste = "<CR>",
+							-- select = "<cr>",
+							-- paste_behind = "P",
+							-- delete = "",
+							-- replay = "",
+							-- edit = "",
+							-- custom = {},
+						},
+					},
+				},
+			})
+		end,
+	},
 }

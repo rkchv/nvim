@@ -1,100 +1,86 @@
+-- function find_golangci_lint()
+-- 	local command = "find . -type f -name 'golangcit*' -print -quit"
+-- 	local handle = io.popen(command)
+-- 	local result = handle:read("*a")
+-- 	handle:close()
+--
+-- 	return result:match("^%s*(.-)%s*$")
+-- end
+--
+-- local golangci_lint_path = find_golangci_lint()
+--
+-- print(golangci_lint_path)
+
 return {
-  {
-    "neovim/nvim-lspconfig",
-    dependencies = {
-      "jose-elias-alvarez/null-ls.nvim"
-    },
-    enabled = true,
+	"VonHeikemen/lsp-zero.nvim",
+	enabled = true,
+	branch = "v2.x",
+	dependencies = {
+		{
+			"williamboman/mason.nvim",
+			"williamboman/mason-lspconfig.nvim",
+			"neovim/nvim-lspconfig",
+			"WhoIsSethDaniel/mason-tool-installer.nvim",
+		},
+	},
 
-    config = function()
-      local lspconfig = require('lspconfig')
+	config = function(_, opts)
+		local lsp = require("lsp-zero")
+		local mason = require("mason")
+		local mason_lspconfig = require("mason-lspconfig")
+		local mason_tool_installer = require("mason-tool-installer")
 
-      lspconfig.emmet_language_server.setup({
-        filetypes = { "typescriptreact", "javascriptreact", "html", "css" },
-      })
+		mason.setup({})
 
-      lspconfig.ts_ls.setup({})
+		mason_tool_installer.setup({
+			ensure_installed = {
+				"terraformls",
+				"eslint_d",
+				"intelephense",
+				-- "html",
+				"tailwindcss",
+				"yamlls",
+				"lua_ls",
+				"jsonls",
+				"dockerls",
+				-- "bashls",
+				"gopls",
+				"golangci_lint_ls",
+				"buf_ls",
+				"delve",
+				-- "htmlbeautifier",
+				"beautysh",
+				"shellcheck",
+				"gofumpt",
+				"golines",
+				"goimports",
+				"gomodifytags",
+				"gotests",
+				"gotestsum",
+				"iferr",
+				"impl",
+				"json-to-struct",
+				"prettier",
+				"stylua",
+				"prettierd",
+				"yamlfix",
+				"ts_ls",
+			},
+		})
 
-      lspconfig.zls.setup({})
-
-      lspconfig.bashls.setup({})
-
-      lspconfig.yamlls.setup({
-        settings = {
-          yaml = {
-            format = {
-              enable = true,
-            },
-            schemas = {
-              ["http://json.schemastore.org/github-workflow"] = ".github/workflows/*",
-            },
-          },
-        },
-      })
-
-      lspconfig.lua_ls.setup({
-        settings = {
-          Lua = {
-            format = {
-              enable = true,
-              defaultConfig = {
-                indent_style = "space",
-                indent_size = "2",
-              }
-            },
-            runtime = {
-              version = 'LuaJIT', -- LuaJIT is used in Neovim
-            },
-            diagnostics = {
-              enable = true,       -- Enable diagnostics for undefined variables
-              globals = { 'vim' }, -- Recognize 'vim' as a global variable in Neovim config files
-            },
-            telemetry = {
-              enable = false, -- Disable telemetry (send anonymous usage data)
-            },
-          },
-        },
-      })
-
-      lspconfig.gopls.setup({
-        -- settings = {
-        --   gopls = {
-        --     analyses = {
-        --       unusedparams = true,
-        --       shadow = true,
-        --       nilness = true,
-        --     },
-        --     staticcheck = true,
-        --     completeUnimported = true,
-        --     gofumpt = true,
-        --     usePlaceholders = true,
-        --     linksInHover = true,
-        --   },
-        -- },
-      })
-
-      lspconfig.ccls.setup({
-        require('lspconfig').ccls.setup({
-          root_dir = require('lspconfig.util').root_pattern('compile_commands.json', '.ccls', '.git')
-        }),
-
-        init_options = {
-          compilationDatabaseDirectory = "build",
-          index = {
-            threads = 0,
-          },
-          clang = {
-            excludeArgs = { "-frounding-math" },
-          },
-        }
-      })
-
-      -- null_ls.setup({
-      --   sources = {
-      --     null_ls.builtins.diagnostics.buf,
-      --     null_ls.builtins.formatting.buf,
-      --   },
-      -- })
-    end,
-  },
+		mason_lspconfig.setup({
+			handlers = {
+				lsp.default_setup,
+				lua_ls = function()
+					local lua_opts = lsp.nvim_lua_ls()
+					require("lspconfig").lua_ls.setup(lua_opts)
+				end,
+				html = function()
+					require("lspconfig").html.setup({
+						filetypes = { "html", "tmpl" },
+					})
+				end,
+			},
+		})
+	end,
 }

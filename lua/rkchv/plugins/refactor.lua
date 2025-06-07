@@ -1,99 +1,96 @@
 return {
-  -- {
-  --   "mg979/vim-visual-multi",
-  --   branch = "master",
-  --   config = function()
-  --     vim.keymap.set("n", "<c-n>", ":call vm#commands#find_under()<CR>", { noremap = true, silent = true })
-  --   end,
-  {
-    'stevearc/conform.nvim',
-    config = function()
-      require("conform").setup({
-        formatters_by_ft = {
-          javascript = { "prettier" },
-          typescript = { "prettier" },
-          javascriptreact = { "prettier" },
-          typescriptreact = { "prettier" },
-          json = { "prettier" },
-        },
-        format_on_save = {
-          timeout_ms = 500,
-          lsp_fallback = true,
-        },
-      })
-    end,
-  },
-  {
-    'MagicDuck/grug-far.nvim',
-    config = function()
-      require('grug-far').setup({
-        -- options, see Configuration section below
-        -- there are no required options atm
-        -- engine = 'ripgrep' is default, but 'astgrep' can be specified
-      });
-    end
-  },
-  {
-    'echasnovski/mini.nvim',
-    version = false,
-    config = function()
-      require('mini.ai').setup()
-    end
-  },
-  {
-    'echasnovski/mini.surround',
-    version = false,
-    config = function()
-      require("mini.surround").setup({
-        {
-          -- Add custom surroundings to be used on top of builtin ones. For more
-          -- information with examples, see `:h MiniSurround.config`.
-          custom_surroundings = nil,
+	{
+		"ThePrimeagen/refactoring.nvim",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			"nvim-treesitter/nvim-treesitter",
+		},
+		lazy = false,
+		config = function()
+			require("refactoring").setup()
+		end,
+	},
 
-          -- Duration (in ms) of highlight when calling `MiniSurround.highlight()`
-          highlight_duration = 500,
+	-- Autoformat
+	{
+		"stevearc/conform.nvim",
+		lazy = false,
+		config = function()
+			require("conform").setup({
+				formatters_by_ft = {
+					-- html = { "eslint_d" },
+					html = { "prettierd", "prettier" },
+					lua = { "stylua" },
+					javascript = { "prettierd", "prettier" },
+					typescript = { "prettierd", "prettier" },
+					javascriptreact = { "prettierd", "prettier" },
+					typescriptreact = { "prettierd", "prettier" },
+					json = { "prettierd", "prettier" },
+					css = { "prettierd", "prettier" },
+					scss = { "prettierd", "prettier" },
+					markdown = { "prettierd", "prettier" },
+					bash = { "beautysh" },
+					yml = { "ymlfix" },
+					proto = { "buf" },
+					sh = { "shellcheck" },
+					go = { "gofmt" },
+				},
+				format_on_save = {
+					timeout_ms = 500,
+					lsp_fallback = true,
+				},
+				stop_after_first = false,
+			})
+		end,
+	},
 
-          -- Module mappings. Use `''` (empty string) to disable one.
-          mappings = {
-            add = 'sa',            -- Add surrounding in Normal and Visual modes
-            delete = 'sd',         -- Delete surrounding
-            find = 'sf',           -- Find surrounding (to the right)
-            find_left = 'sF',      -- Find surrounding (to the left)
-            highlight = 'sh',      -- Highlight surrounding
-            replace = 'sr',        -- Replace surrounding
-            update_n_lines = 'sn', -- Update `n_lines`
+	-- Find and replace
+	{
+		"MagicDuck/grug-far.nvim",
+		config = function()
+			require("grug-far").setup({})
+		end,
+	},
 
-            suffix_last = 'l',     -- Suffix to search with "prev" method
-            suffix_next = 'n',     -- Suffix to search with "next" method
-          },
-
-          -- Number of lines within which surrounding is searched
-          n_lines = 20,
-
-          -- Whether to respect selection type:
-          -- - Place surroundings on separate lines in linewise mode.
-          -- - Place surroundings on each line in blockwise mode.
-          respect_selection_type = false,
-
-          -- How to search for surrounding (first inside current line, then inside
-          -- neighborhood). One of 'cover', 'cover_or_next', 'cover_or_prev',
-          -- 'cover_or_nearest', 'next', 'prev', 'nearest'. For more details,
-          -- see `:h MiniSurround.config`.
-          search_method = 'cover',
-
-          -- Whether to disable showing non-error feedback
-          -- This also affects (purely informational) helper messages shown after
-          -- idle time if user input is required.
-          silent = false,
-        }
-      })
-    end
-  },
-  {
-    "windwp/nvim-autopairs",
-    event = "InsertEnter",
-    config = function()
-      require("nvim-autopairs").setup({})
-    end,
-  },
+	-- Helpers
+	{
+		"echasnovski/mini.nvim",
+		version = false,
+		config = function()
+			require("mini.comment").setup()
+			require("mini.move").setup()
+			require("mini.ai").setup()
+			require("mini.pairs").setup()
+			require("mini.surround").setup({
+				{
+					custom_surroundings = nil,
+					highlight_duration = 500,
+					mappngs = {
+						-- Add surroundng in Normal and Visual modes
+						add = "sa",
+						-- Delete surrounding
+						delete = "sd",
+						-- Find surrounding (to the right)
+						find = "sf",
+						-- Find surrounding (to the left)
+						find_left = "sF",
+						-- Highlight surrounding
+						highlight = "sh",
+						-- Replace surrounding
+						replace = "sr",
+						-- Update `n_lines`
+						update_n_lines = "sn",
+						-- Suffix to search with "prev" method
+						suffix_last = "l",
+						-- Suffix to search with "next" method
+						suffix_next = "n",
+					},
+					n_lines = 20,
+					respect_selection_type = false,
+					search_method = "cover",
+					silent = true,
+				},
+			})
+		end,
+	},
 }
