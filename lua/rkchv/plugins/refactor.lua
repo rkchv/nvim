@@ -33,7 +33,7 @@ return {
 					yml = { "ymlfix" },
 					proto = { "buf" },
 					sh = { "shellcheck" },
-					go = { "gofmt" },
+					go = { "gofumpt" },
 				},
 				format_on_save = {
 					timeout_ms = 500,

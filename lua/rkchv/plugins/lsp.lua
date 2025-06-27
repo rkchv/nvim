@@ -1,16 +1,3 @@
--- function find_golangci_lint()
--- 	local command = "find . -type f -name 'golangcit*' -print -quit"
--- 	local handle = io.popen(command)
--- 	local result = handle:read("*a")
--- 	handle:close()
---
--- 	return result:match("^%s*(.-)%s*$")
--- end
---
--- local golangci_lint_path = find_golangci_lint()
---
--- print(golangci_lint_path)
-
 return {
 	"VonHeikemen/lsp-zero.nvim",
 	enabled = true,
@@ -45,7 +32,6 @@ return {
 				"dockerls",
 				-- "bashls",
 				"gopls",
-				"golangci_lint_ls",
 				"buf_ls",
 				"delve",
 				-- "htmlbeautifier",
