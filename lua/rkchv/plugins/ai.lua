@@ -25,7 +25,7 @@ return {
 	{
 		"github/copilot.vim",
 		event = "InsertEnter",
-		enabled = false, -- если хочешь наоборот включить codeium, а copilot выключить — поменяй местами enabled
+		enabled = false,
 		config = function()
 			vim.g.copilot_no_tab_map = true
 			vim.api.nvim_set_keymap("i", "<C-g>", 'copilot#Accept("<CR>")', {
