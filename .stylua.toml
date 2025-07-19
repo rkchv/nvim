@@ -1,0 +1,6 @@
+# Stylua configuration
+# Disable formatting for specific files
+
+# Disable formatting for harpoon.lua
+[ignore]
+"lua/rkchv/plugins/harpoon.lua" 
