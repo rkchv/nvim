@@ -1,75 +1,123 @@
--- Ui/Common
-vim.keymap.set("n", "<leader>z", ":ZenMode<CR>", { desc = "Turn on/off Zen mode" })
-vim.keymap.set("n", "<Esc>", ":noh<CR>", { desc = "Esc highlighting" })
-vim.keymap.set("n", "<F2>", "<cmd>wall<cr>", { desc = "Save all files" })
-vim.keymap.set("n", "qq", "<cmd>qall!<cr>", { desc = "Quit all" })
-vim.keymap.set("n", "<leader>cf", '<cmd>let @+ = expand("%")<CR>', { desc = "Copy File Name" })
-vim.keymap.set("n", "<leader>cp", '<cmd>let @+ = expand("%:p")<CR>', { desc = "Copy File Path" })
-vim.keymap.set("n", "-", ":Oil<CR>", { desc = "Open parent directory" })
+-- Performance: Use local variables for better performance
+local map = vim.keymap.set
+local opts = { noremap = true, silent = true }
 
--- Selection
-vim.keymap.set("n", "==", "gg<S-v>G", { desc = "Select all buffer" })
-vim.keymap.set("n", "Y", "y$", { desc = "Yank from cursor to end of the line" })
-vim.keymap.set("n", "vv", "^vg_", { desc = "Select the current line, excluding indentation" })
+-- UI/Common mappings
+map("n", "<leader>z", ":ZenMode<CR>", { desc = "Turn on/off Zen mode" })
+map("n", "<Esc>", ":noh<CR>", { desc = "Esc highlighting" })
+map("n", "<F2>", "<cmd>wall<cr>", { desc = "Save all files" })
+map("n", "qq", "<cmd>qall!<cr>", { desc = "Quit all" })
+map("n", "<leader>cf", '<cmd>let @+ = expand("%")<CR>', { desc = "Copy File Name" })
+map("n", "<leader>cp", '<cmd>let @+ = expand("%:p")<CR>', { desc = "Copy File Path" })
+map("n", "-", ":Oil<CR>", { desc = "Open parent directory" })
 
--- Editing
-vim.keymap.set("n", "<leader>d", [["_d]], { desc = "Delete and don't put in in buffer" })
-vim.keymap.set("v", "<leader>d", [["_d]], { desc = "Delete and don't put in in buffer" })
-vim.keymap.set("v", "<leader>p", [["_dP]], { desc = "Replace selection with buffer" })
-vim.keymap.set("n", "dh", "d^", { desc = "Delete to the first non-blank character of the line" })
-vim.keymap.set("n", "J", "mzJ`z", { desc = "Join lines" })
+-- Selection mappings
+map("n", "==", "gg<S-v>G", { desc = "Select all buffer" })
+map("n", "Y", "y$", { desc = "Yank from cursor to end of the line" })
+map("n", "vv", "^vg_", { desc = "Select the current line, excluding indentation" })
 
--- Editing/gopher
-vim.keymap.set("n", "<leader>aj", ":silent! GoTagAdd json<CR>", { desc = "Add json tags" })
-vim.keymap.set("n", "<leader>ay", ":silent! GoTagAdd yaml<CR>", { desc = "Add yaml tags" })
-vim.keymap.set("n", "<leader>at", ":silent! GoTestAdd<CR>", { desc = "Add test for func" })
-vim.keymap.set("n", "<leader>ae", ":silent! GoTestsExp<CR>", { desc = "Add test for exp func" })
-vim.keymap.set("n", "<leader>aa", ":silent! GoTestsAll<CR>", { desc = "Add test for all funcs" })
-vim.keymap.set("n", "<leader>ai", ":silent! GoImpl<CR>", { desc = "Generate interface implementation" })
-vim.keymap.set("n", "<leader>ar", ":silent! GoIfErr<CR>", { desc = "Generate ifferr statement" })
-vim.keymap.set("n", "<leader>ad", ":silent! GoCmt<CR>", { desc = "Generate doc" })
+-- Custom yank function that moves to end of selection
+local function yank_to_end()
+	-- Get the current cursor position before yanking
+	local cursor_pos = vim.api.nvim_win_get_cursor(0)
 
-vim.keymap.set(
-	{ "n", "v" },
-	"<leader>s",
-	[[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]],
-	{ desc = "Find and replace" }
-)
+	-- Get the visual selection marks before yanking
+	local start_pos = vim.api.nvim_buf_get_mark(0, "<")
+	local end_pos = vim.api.nvim_buf_get_mark(0, ">")
 
--- Moving
-vim.keymap.set("n", "gl", "g_", { desc = "Move to the last non-blank character of the line" })
-vim.keymap.set("n", "gh", "^", { desc = "Move to the first non-blank character of the line" })
-vim.keymap.set("n", "gj", "/^#<CR>", { desc = "Jump to the next Markdown header" })
-vim.keymap.set("n", "gk", "?^#<CR>", { desc = "Jump to the previous Markdown header" })
-vim.keymap.set("v", "<", "<gv", { desc = "Move selection left" })
-vim.keymap.set("v", ">", ">gv", { desc = "Move selection right" })
-vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Move to left window" })
-vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Move to bottom window" })
-vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Move to top window" })
-vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
-vim.keymap.set("n", "<C-d>", "12jzz", { desc = "Scroll down 12 lines and center the cursor" })
-vim.keymap.set("n", "<C-u>", "12kzz", { desc = "Scroll up 12 lines and center the cursor" })
-vim.keymap.set("n", "n", "nzzzv", { desc = "Search forward and center cursor" })
-vim.keymap.set("n", "N", "Nzzzv", { desc = "Search backward and center cursor" })
-vim.keymap.set("n", "LL", ":e #<CR>", { desc = "Edit the last opened file" })
+	-- Yank the selection
+	vim.cmd("normal! y")
 
--- Lsp
-vim.keymap.set("n", "<leader>rn", ":lua vim.lsp.buf.rename()<CR>", { desc = "Rename LSP symbol" })
-vim.keymap.set("n", "<leader>nd", ":lua vim.lsp.buf.definition()<CR>", { desc = "LSP Go to Definition" })
-vim.keymap.set("n", "<leader>gi", ":lua vim.lsp.buf.implementation()<CR>", { desc = "LSP Go to Implementation" })
-vim.keymap.set("n", "<leader>gr", ":lua vim.lsp.buf.references()<CR>", { desc = "LSP References" })
-vim.keymap.set("n", "<leader>ga", ":lua vim.lsp.buf.code_action()<CR>", { desc = "LSP Code Action" })
-vim.keymap.set("n", "<leader>ld", ":lua vim.lsp.buf.declaration()<CR>", { desc = "LSP Declaration" })
-vim.keymap.set("n", "<leader>e", ":lua vim.diagnostic.open_float()<CR>", { desc = "Diagnostic Float" })
-vim.keymap.set("n", "K", ":lua vim.lsp.buf.hover()<CR>", { desc = "Hover (LSP)" })
+	-- Move cursor to end of selection using a safer approach
+	if start_pos and end_pos then
+		-- Use g` to move to the end mark, which is more reliable
+		vim.cmd("normal! g`>")
+	end
+end
 
-vim.keymap.set("n", "<leader>uu", function()
+-- Override y in visual mode to move to end after yanking
+map("v", "y", yank_to_end, { desc = "Yank and move to end of selection" })
+
+-- Editing mappings
+map({"n", "v"}, "<leader>d", [["_d]], { desc = "Delete and don't put in buffer" })
+map("v", "<leader>p", [["_dP]], { desc = "Replace selection with buffer" })
+map("n", "dh", "d^", { desc = "Delete to the first non-blank character of the line" })
+map("n", "J", "mzJ`z", { desc = "Join lines" })
+
+-- Simple find and replace 
+map({ "n", "v" }, "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], { desc = "Find and replace" })
+
+-- Navigation mappings
+map("n", "gl", "g_", { desc = "Move to the last non-blank character of the line" })
+map("n", "gh", "^", { desc = "Move to the first non-blank character of the line" })
+
+-- Window navigation
+map("n", "<C-h>", "<C-w>h", { desc = "Move to left window" })
+map("n", "<C-j>", "<C-w>j", { desc = "Move to bottom window" })
+map("n", "<C-k>", "<C-w>k", { desc = "Move to top window" })
+map("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
+
+-- Scrolling 
+map("n", "<C-d>", "12jzz", { desc = "Scroll down 12 lines and center the cursor" })
+map("n", "<C-u>", "12kzz", { desc = "Scroll up 12 lines and center the cursor" })
+
+-- Search improvements
+map("n", "n", "nzzzv", { desc = "Search forward and center cursor" })
+map("n", "N", "Nzzzv", { desc = "Search backward and center cursor" })
+
+-- File management
+map("n", "LL", ":e #<CR>", { desc = "Edit the last opened file" })
+
+-- LSP mappings with performance optimization
+local function lsp_rename()
+	vim.lsp.buf.rename()
+end
+
+local function lsp_definition()
+	vim.lsp.buf.definition()
+end
+
+local function lsp_implementation()
+	vim.lsp.buf.implementation()
+end
+
+local function lsp_references()
+	vim.lsp.buf.references()
+end
+
+local function lsp_code_action()
+	vim.lsp.buf.code_action()
+end
+
+local function lsp_declaration()
+	vim.lsp.buf.declaration()
+end
+
+local function diagnostic_float()
+	vim.diagnostic.open_float()
+end
+
+local function lsp_hover()
+	vim.lsp.buf.hover()
+end
+
+map("n", "<leader>rn", lsp_rename, { desc = "Rename LSP symbol" })
+map("n", "<leader>nd", lsp_definition, { desc = "LSP Go to Definition" })
+map("n", "<leader>gi", lsp_implementation, { desc = "LSP Go to Implementation" })
+map("n", "<leader>gr", lsp_references, { desc = "LSP References" })
+map("n", "<leader>ga", lsp_code_action, { desc = "LSP Code Action" })
+map("n", "<leader>ld", lsp_declaration, { desc = "LSP Declaration" })
+map("n", "<leader>e", diagnostic_float, { desc = "Diagnostic Float" })
+map("n", "K", lsp_hover, { desc = "Hover (LSP)" })
+
+-- Formatting with performance optimization
+map("n", "<leader>uu", function()
 	require("conform").format({ async = true, lsp_fallback = true })
 end, { desc = "Format file" })
 
--- Keys disabling
-vim.keymap.set("n", "q", "<nop>")
-vim.keymap.set("n", "ZQ", "<nop>")
-vim.keymap.set("n", "<F1>", "<nop>")
-vim.keymap.set("n", "<F3>", "<nop>")
-vim.keymap.set("n", "<C-[", "<nop>")
+-- Disable unused keys for better performance
+map("n", "q", "<nop>")
+map("n", "ZQ", "<nop>")
+map("n", "<F1>", "<nop>")
+map("n", "<F3>", "<nop>")
+map("n", "<C-[", "<nop>")

@@ -1,96 +1,110 @@
 return {
 	{
-		"ThePrimeagen/refactoring.nvim",
-		dependencies = {
-			"nvim-lua/plenary.nvim",
-			"nvim-treesitter/nvim-treesitter",
-		},
-		lazy = false,
-		config = function()
-			require("refactoring").setup()
-		end,
-	},
-
-	-- Autoformat
-	{
 		"stevearc/conform.nvim",
 		lazy = false,
 		config = function()
 			require("conform").setup({
 				formatters_by_ft = {
-					-- html = { "eslint_d" },
+					-- Web technologies
 					html = { "prettierd", "prettier" },
-					lua = { "stylua" },
-					javascript = { "prettierd", "prettier" },
-					typescript = { "prettierd", "prettier" },
-					javascriptreact = { "prettierd", "prettier" },
-					typescriptreact = { "prettierd", "prettier" },
-					json = { "prettierd", "prettier" },
 					css = { "prettierd", "prettier" },
 					scss = { "prettierd", "prettier" },
-					markdown = { "prettierd", "prettier" },
-					bash = { "beautysh" },
-					yml = { "ymlfix" },
+					javascript = { "prettierd", "prettier", "eslint_d" },
+					typescript = { "prettierd", "prettier", "eslint_d" },
+					javascriptreact = { "prettierd", "prettier", "eslint_d" },
+					typescriptreact = { "prettierd", "prettier", "eslint_d" },
+					json = { "prettierd", "prettier" },
+					jsonc = { "prettierd", "prettier" },
+					
+					-- Scripting languages
+					lua = { "stylua" },
+					python = { "black", "isort" },
+					sh = { "beautysh", "shellcheck" },
+					bash = { "beautysh", "shellcheck" },
+					zsh = { "beautysh" },
+					
+					-- Configuration files
+					yml = { "yamlfix" },
+					yaml = { "yamlfix" },
+					toml = { "taplo" },
+					
+					-- Other languages
+					go = { "gofumpt", "goimports" },
+					rust = { "rustfmt" },
+					c = { "clang_format" },
+					cpp = { "clang_format" },
+					java = { "google_java_format" },
 					proto = { "buf" },
-					sh = { "shellcheck" },
-					go = { "gofumpt" },
+					sql = { "sqlformat" },
+					markdown = { "prettierd", "prettier", "markdownlint" },
+					md = { "prettierd", "prettier", "markdownlint" },
 				},
 				format_on_save = {
 					timeout_ms = 500,
 					lsp_fallback = true,
 				},
-				stop_after_first = false,
+				format_after_save = {
+					timeout_ms = 500,
+				},
+				notify_on_error = true,
+				format_on_save_ignore = {
+					"javascript",
+					"typescript",
+					"javascriptreact",
+					"typescriptreact",
+				},
+				-- Custom formatters
+				formatters = {
+					-- Add custom formatters if needed
+					shfmt = {
+						prepend_args = { "-i", "2", "-ci" },
+					},
+					prettierd = {
+						prepend_args = { "--config-precedence", "prefer-file" },
+					},
+				},
 			})
+
 		end,
 	},
 
-	-- Find and replace
+	-- Enhanced find and replace
 	{
 		"MagicDuck/grug-far.nvim",
 		config = function()
-			require("grug-far").setup({})
+			require("grug-far").setup({
+				-- Customize the UI
+				ui = {
+					width = 0.8,
+					height = 0.8,
+					border = "rounded",
+				},
+				-- Search options
+				search = {
+					-- Default search options
+					case_sensitive = false,
+					word_boundary = false,
+					regex = false,
+				},
+				-- Replace options
+				replace = {
+					-- Preview changes before applying
+					preview = true,
+					-- Confirm each replacement
+					confirm = true,
+				},
+			})
+
+			-- Keymaps for find and replace
+			vim.keymap.set("n", "<leader>fr", function()
+				require("grug-far").open()
+			end, { desc = "Find and replace" })
+			
+			vim.keymap.set("n", "<leader>fx", function()
+				require("grug-far").open({ regex = true })
+			end, { desc = "Find and replace (regex)" })
+									
 		end,
 	},
 
-	-- Helpers
-	{
-		"echasnovski/mini.nvim",
-		version = false,
-		config = function()
-			require("mini.comment").setup()
-			require("mini.move").setup()
-			require("mini.ai").setup()
-			require("mini.pairs").setup()
-			require("mini.surround").setup({
-				{
-					custom_surroundings = nil,
-					highlight_duration = 500,
-					mappngs = {
-						-- Add surroundng in Normal and Visual modes
-						add = "sa",
-						-- Delete surrounding
-						delete = "sd",
-						-- Find surrounding (to the right)
-						find = "sf",
-						-- Find surrounding (to the left)
-						find_left = "sF",
-						-- Highlight surrounding
-						highlight = "sh",
-						-- Replace surrounding
-						replace = "sr",
-						-- Update `n_lines`
-						update_n_lines = "sn",
-						-- Suffix to search with "prev" method
-						suffix_last = "l",
-						-- Suffix to search with "next" method
-						suffix_next = "n",
-					},
-					n_lines = 20,
-					respect_selection_type = false,
-					search_method = "cover",
-					silent = true,
-				},
-			})
-		end,
-	},
 }
