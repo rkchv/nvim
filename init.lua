@@ -33,6 +33,7 @@ safe_require("rkchv.core.lazy")
 safe_require("rkchv.config.lazy")
 safe_require("rkchv.config.set")
 safe_require("rkchv.config.remap")
+safe_require("rkchv.config.autocmd")
 
 -- Initialize performance monitoring
 local performance = safe_require("rkchv.core.performance")

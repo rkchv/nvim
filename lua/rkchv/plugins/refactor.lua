@@ -29,7 +29,7 @@ return {
 					toml = { "taplo" },
 					
 					-- Other languages
-					go = { "gofumpt", "goimports" },
+					go = { "gofumpt" },
 					rust = { "rustfmt" },
 					c = { "clang_format" },
 					cpp = { "clang_format" },
